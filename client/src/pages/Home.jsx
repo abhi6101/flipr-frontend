@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,96 +27,39 @@ ChartJS.register(
   Filler
 );
 
-// 2. MOCK DATA
-const mockOfferings = [
-  {
-    id: 1,
-    tag: 'House',
-    image: '/10.svg',
-    title: 'Oxalis',
-    location: 'Brooklyn, NY',
-    description: 'A recognized leader in language immersion & early education, opening second school.',
-    raised: 574920,
-    target: 1000000,
-    securityType: 'Revenue Sharing Note',
-    multiple: 1.4,
-    maturity: 48,
-    minInvestment: 100
-  },
-  {
-    id: 2,
-    tag: 'Family Business',
-    image: '/8.svg',
-    title: 'Oxalis',
-    location: 'Brooklyn, NY',
-    description: 'A recognized leader in language immersion & early education, opening second school.',
-    raised: 574920,
-    target: 1000000,
-    securityType: 'Revenue Sharing Note',
-    multiple: 1.4,
-    maturity: 48,
-    minInvestment: 100
-  },
-  {
-    id: 3,
-    tag: 'Real Estate',
-    image: '/3.svg',
-    title: 'Oxalis',
-    location: 'Brooklyn, NY',
-    description: 'A recognized leader in language immersion & early education, opening second school.',
-    raised: 574920,
-    target: 1000000,
-    securityType: 'Revenue Sharing Note',
-    multiple: 1.4,
-    maturity: 48,
-    minInvestment: 100
-  },
-  {
-    id: 4,
-    tag: 'House',
-    image: '/11.svg',
-    title: 'Oxalis',
-    location: 'Brooklyn, NY',
-    description: 'A recognized leader in language immersion & early education, opening second school.',
-    raised: 574920,
-    target: 1000000,
-    securityType: 'Revenue Sharing Note',
-    multiple: 1.4,
-    maturity: 48,
-    minInvestment: 100
-  },
-  {
-    id: 5,
-    tag: 'Family Business',
-    image: '/7.svg',
-    title: 'Oxalis',
-    location: 'Brooklyn, NY',
-    description: 'A recognized leader in language immersion & early education, opening second school.',
-    raised: 574920,
-    target: 1000000,
-    securityType: 'Revenue Sharing Note',
-    multiple: 1.4,
-    maturity: 48,
-    minInvestment: 100
-  },
-  {
-    id: 6,
-    tag: 'Real Estate',
-    image: '/9.svg',
-    title: 'Oxalis',
-    location: 'Brooklyn, NY',
-    description: 'A recognized leader in language immersion & early education, opening second school.',
-    raised: 574920,
-    target: 1000000,
-    securityType: 'Revenue Sharing Note',
-    multiple: 1.4,
-    maturity: 48,
-    minInvestment: 100
-  }
-];
-
 const Home = () => {
-  // Chart Data
+  // --- STATE MANAGEMENT ---
+  const [offerings, setOfferings] = useState([]);
+  const [email, setEmail] = useState('');
+
+  // --- 1. FETCH DATA (Cards) ---
+  useEffect(() => {
+    axios.get('http://localhost:8080/api/offerings')
+      .then(response => {
+        setOfferings(response.data);
+      })
+      .catch(error => {
+        console.error("Error fetching offerings:", error);
+      });
+  }, []);
+
+  // --- 2. HANDLE NEWSLETTER SUBMIT ---
+  const handleSubscribe = async () => {
+    if (!email) {
+      alert("Please enter an email address.");
+      return;
+    }
+    try {
+      await axios.post('http://localhost:8080/api/newsletter', { email });
+      alert('Subscribed successfully!');
+      setEmail(''); // Clear input
+    } catch (err) {
+      console.error(err);
+      alert('Error subscribing. Please try again.');
+    }
+  };
+
+  // --- CHART CONFIGURATION ---
   const chartData = {
     labels: ['2015', '2016', '2017', '2018', '2019', '2020'],
     datasets: [
@@ -123,10 +67,11 @@ const Home = () => {
         fill: true,
         label: 'Payouts',
         data: [2, 3.5, 3, 5, 4.5, 7],
-        borderColor: '#169ca3',
+        borderColor: '#169ca3', // Teal
         backgroundColor: 'rgba(22, 156, 163, 0.1)',
         tension: 0.4,
         pointRadius: 0,
+        pointHoverRadius: 6,
       },
     ],
   };
@@ -155,7 +100,7 @@ const Home = () => {
                 alt="Background" 
                 className="w-full h-full object-cover object-top" 
             />
-            {/* Lighter tint to keep image visible */}
+            {/* Light Overlay for text readability */}
             <div className="absolute inset-0 bg-[#2d3b55]/40"></div>
         </div>
 
@@ -177,26 +122,26 @@ const Home = () => {
              />
         </div>
 
-        {/* 4. Text Content - STRICT LEFT ALIGNMENT */}
-        <div className="relative z-20 w-full max-w-7xl mx-auto px-8 flex items-center h-full">
-            <div className="max-w-xl flex flex-col items-start text-left mt-[-30px]">
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight drop-shadow-md">
+        {/* 4. Text Content */}
+        <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-8 flex items-center h-full">
+            <div className="max-w-xl mt-[-40px]">
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
                     Meaningful investments in <br/>
                     Main Street businesses
                 </h1>
                 <p className="text-lg text-white mb-8 max-w-md font-medium drop-shadow-md">
                     Browse vetted investment offerings in communities all over the US.
                 </p>
-                {/* Button is Left Aligned */}
-                <button className="bg-[#169ca3] px-8 py-4 rounded-sm text-white font-bold hover:bg-teal-700 transition shadow-lg uppercase tracking-wide text-xs">
+                <button className="bg-[#169ca3] px-10 py-4 rounded text-white font-bold hover:bg-teal-700 transition shadow-lg uppercase tracking-wide text-xs">
                     Get Started
                 </button>
             </div>
         </div>
       </header>
 
-      {/* ---------------- OFFERINGS SECTION ---------------- */}
+      {/* ---------------- OFFERINGS SECTION (Dynamic) ---------------- */}
       <section id="offerings" className="py-24 max-w-7xl mx-auto px-4 relative">
+        {/* Decorative Blob */}
         <img src="/Shape.svg" alt="" className="absolute top-40 left-[-100px] w-80 opacity-40 -z-10" />
 
         <div className="text-center mb-16">
@@ -206,10 +151,17 @@ const Home = () => {
           </p>
         </div>
 
+        {/* Grid: Mapped from MySQL Database */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockOfferings.map((offer) => (
-            <OfferingCard key={offer.id} data={offer} />
-          ))}
+          {offerings.length > 0 ? (
+            offerings.map((offer) => (
+              <OfferingCard key={offer.id} data={offer} />
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-10 text-gray-400">
+                <p>Loading investments from database...</p>
+            </div>
+          )}
         </div>
         
         <div className="text-center mt-16">
@@ -221,6 +173,7 @@ const Home = () => {
 
       {/* ---------------- CHART SECTION ---------------- */}
       <section className="bg-[#ecf6f7] py-24 relative overflow-hidden">
+        {/* Background Curve */}
         <div className="absolute top-0 left-[-10%] h-full w-[60%] z-0">
             <img 
                 src="/1.svg" 
@@ -245,6 +198,7 @@ const Home = () => {
             </div>
         </div>
         
+        {/* Right Decoration */}
         <img src="/Subtract.svg" className="absolute top-10 right-0 w-24 opacity-50 rotate-180" alt="" />
       </section>
 
@@ -311,12 +265,22 @@ const Home = () => {
                  </div>
              </div>
              
+             {/* Newsletter Form Connected to DB */}
              <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-8">
                 <div className="w-full md:w-auto">
                     <h4 className="font-bold text-gray-900 mb-4">Subscribe to our newsletter</h4>
                     <div className="flex">
-                        <input type="email" placeholder="Email address" className="p-3 w-64 bg-[#f2f4f5] border-b border-gray-300 focus:outline-none focus:border-primary" />
-                        <button className="bg-[#ff5a5f] p-3 rounded text-white ml-2 hover:bg-red-500 shadow-md">
+                        <input 
+                            type="email" 
+                            placeholder="Email address" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="p-3 w-64 bg-[#f2f4f5] border-b border-gray-300 focus:outline-none focus:border-primary" 
+                        />
+                        <button 
+                            onClick={handleSubscribe}
+                            className="bg-[#ff5a5f] p-3 rounded text-white ml-2 hover:bg-red-500 shadow-md"
+                        >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
