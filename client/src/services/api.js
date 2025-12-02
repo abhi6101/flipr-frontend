@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // Your Backend URL
+  // CHANGE THIS: Point to your live Render backend
+  // Note: We keep '/api' at the end because your previous code had it.
+  baseURL: 'https://flipr-backend-n9mi.onrender.com/api', 
 });
 
 // Automatically add the JWT Token to every request

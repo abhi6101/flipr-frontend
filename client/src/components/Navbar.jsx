@@ -1,37 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   return (
-    <nav className="bg-white shadow-sm py-5 px-8 flex justify-between items-center sticky top-0 z-50">
-      {/* 1. Logo: Uppercase, Bold, Teal */}
-      <div className="text-xl font-bold text-[#169ca3] tracking-widest cursor-pointer uppercase">
-        Next Invest
-      </div>
+    <nav className="bg-white dark:bg-gray-900 shadow-sm py-4 px-8 flex justify-between items-center sticky top-0 z-50 transition-colors duration-300">
+      <Link to="/" className="text-2xl font-bold text-[#169ca3] tracking-wider">
+        NEXT INVEST
+      </Link>
       
-      {/* 2. Menu Items */}
-      <div className="hidden md:flex gap-8 items-center text-sm font-bold text-gray-700">
+      <div className="hidden md:flex gap-8 items-center text-sm font-semibold text-gray-600 dark:text-gray-300">
+        <a href="/#offerings" className="hover:text-[#169ca3] transition">Investment Opportunities</a>
+        <a href="#" className="hover:text-[#169ca3] transition">How it works</a>
+        <a href="#" className="hover:text-[#169ca3] transition">About us</a>
         
-        <div className="flex items-center gap-1 cursor-pointer hover:text-[#169ca3]">
-            <Link to="/">Investment Opportunities</Link>
-            <img src="/CaretDown.svg" className="w-2 h-2 opacity-50" alt="" />
-        </div>
+        {/* Dark Mode Button */}
+        <ThemeToggle />
 
-        <div className="flex items-center gap-1 cursor-pointer hover:text-[#169ca3]">
-            <a href="#">How it works</a>
-            <img src="/CaretDown.svg" className="w-2 h-2 opacity-50" alt="" />
-        </div>
-
-        <a href="#" className="hover:text-[#169ca3]">About us</a>
-        
-        {/* LOGIN: Teal Background */}
-        <Link to="/login" className="bg-[#169ca3] text-white px-6 py-3 rounded-sm shadow-sm hover:bg-teal-700 transition uppercase tracking-wide text-xs font-bold">
-          Login
+        <Link to="/login" className="bg-[#169ca3] text-white px-5 py-2 rounded shadow hover:bg-teal-700 transition">
+          LOGIN
         </Link>
-
-        {/* REGISTER: White with Pink Border */}
-        <button className="bg-white border border-[#ff5a5f] text-[#ff5a5f] px-6 py-3 rounded-sm hover:bg-gray-50 transition uppercase tracking-wide text-xs font-bold">
-          Register
+        <button className="border border-[#169ca3] text-[#169ca3] px-5 py-2 rounded hover:bg-teal-50 dark:hover:bg-gray-800 transition">
+          REGISTER
         </button>
       </div>
     </nav>

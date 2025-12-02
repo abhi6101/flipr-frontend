@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // We use raw axios here for the first login request
+import axios from 'axios';
 import Navbar from '../components/Navbar';
+import { motion } from 'framer-motion';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,23 +13,13 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-
     try {
-      // 1. Send Credentials to Backend
       const response = await axios.post('http://localhost:8080/api/auth/login', {
-        username: username,
-        password: password
+        username,
+        password
       });
-
-      // 2. If successful, backend returns a String (The Token)
-      const token = response.data;
-
-      // 3. Save Token to Local Storage
-      localStorage.setItem('token', token);
-
-      // 4. Go to Admin Dashboard
+      localStorage.setItem('token', response.data);
       navigate('/admin');
-
     } catch (err) {
       console.error("Login Failed", err);
       setError('Invalid Username or Password');
@@ -36,46 +27,62 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 font-sans transition-colors duration-300">
       <Navbar />
       <div className="flex items-center justify-center h-[calc(100vh-80px)]">
-        <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Admin Login</h2>
+        
+        {/* --- ANIMATED LOGIN CARD --- */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-md border-t-4 border-[#169ca3]"
+        >
+          <h2 className="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-white">Welcome Back</h2>
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-8">Please enter your admin credentials</p>
           
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+            <motion.div 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-3 rounded mb-4 text-sm"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Username</label>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Username</label>
               <input 
                 type="text" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-[#169ca3]" 
-                placeholder="Enter username"
+                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-3 focus:outline-none focus:border-[#169ca3] transition-colors" 
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Password</label>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Password</label>
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:border-[#169ca3]" 
-                placeholder="Enter password"
+                className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-3 focus:outline-none focus:border-[#169ca3] transition-colors" 
                 required
               />
             </div>
-            <button type="submit" className="w-full bg-[#169ca3] text-white py-3 rounded-lg font-bold hover:bg-teal-700 transition shadow-md">
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit" 
+              className="w-full bg-[#169ca3] text-white py-3 rounded-lg font-bold hover:bg-teal-700 transition shadow-lg"
+            >
               SIGN IN
-            </button>
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
+
       </div>
     </div>
   );
