@@ -34,7 +34,7 @@ const Home = () => {
 
   // Fetch Data
   useEffect(() => {
-    axios.get('http://localhost:8080/api/offerings')
+    axios.get('https://flipr-backend-n9mi.onrender.com/api/offerings')
       .then(response => setOfferings(response.data))
       .catch(error => console.error("Error fetching offerings:", error));
   }, []);
@@ -46,7 +46,7 @@ const Home = () => {
       return;
     }
     try {
-      await axios.post('http://localhost:8080/api/newsletter', { email });
+      await axios.post('https://flipr-backend-n9mi.onrender.com/api/newsletter', { email });
       alert('Subscribed successfully!');
       setEmail(''); 
     } catch (err) {
