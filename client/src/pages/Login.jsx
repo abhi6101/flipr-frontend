@@ -40,6 +40,7 @@ const Login = () => {
         >
           <h2 className="text-3xl font-bold text-center mb-2 text-gray-800 dark:text-white">Welcome Back</h2>
           <p className="text-center text-gray-500 dark:text-gray-400 mb-8">Please enter your admin credentials</p>
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-8">⏳ The server may take 30–60 seconds to start if it was idle. Please wait after clicking Login.</p>
           
           {error && (
             <motion.div 
