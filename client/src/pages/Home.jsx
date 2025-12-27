@@ -16,6 +16,7 @@ import { Line } from 'react-chartjs-2';
 import Navbar from '../components/Navbar';
 import OfferingCard from '../components/OfferingCard';
 import SkeletonCard from '../components/SkeletonCard';
+import ScrollToTop from '../components/ScrollToTop';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,6 +33,14 @@ ChartJS.register(
 const Home = () => {
   const [offerings, setOfferings] = useState([]);
   const [email, setEmail] = useState('');
+  const [scrollY, setScrollY] = useState(0);
+
+  // Parallax scroll effect
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Fetch Data
   useEffect(() => {
@@ -89,15 +98,52 @@ const Home = () => {
     }
   };
 
+  // Floating particles animation
+  const particles = Array.from({ length: 20 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 4 + 2,
+    duration: Math.random() * 20 + 10,
+  }));
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 font-sans transition-colors duration-300">
       <Navbar />
 
-      {/* ---------------- HERO SECTION (Exact Match) ---------------- */}
+      {/* ---------------- HERO SECTION (Enhanced with Parallax) ---------------- */}
       <header className="relative h-[650px] w-full overflow-hidden flex items-center">
 
-        {/* 1. Base Background Image (3.svg) */}
-        <div className="absolute inset-0 z-0">
+        {/* Floating Particles Background */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {particles.map((particle) => (
+            <motion.div
+              key={particle.id}
+              className="absolute rounded-full bg-[#169ca3]/20 dark:bg-[#169ca3]/30"
+              style={{
+                left: `${particle.x}%`,
+                top: `${particle.y}%`,
+                width: `${particle.size}px`,
+                height: `${particle.size}px`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: particle.duration,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* 1. Base Background Image (3.svg) with Parallax */}
+        <motion.div
+          className="absolute inset-0 z-0"
+          style={{ y: scrollY * 0.5 }}
+        >
           <img
             src="/3.svg"
             alt="Background"
@@ -105,28 +151,34 @@ const Home = () => {
           />
           {/* Subtle dark tint to make text pop, but keep image visible */}
           <div className="absolute inset-0 bg-[#1f2937]/20"></div>
-        </div>
+        </motion.div>
 
         {/* 2. Blue Circle Overlay (5.svg) - LEFT SIDE */}
-        <div className="absolute top-[-15%] left-[-10%] h-[130%] w-[70%] z-10 pointer-events-none">
+        <motion.div
+          className="absolute top-[-15%] left-[-10%] h-[130%] w-[70%] z-10 pointer-events-none"
+          style={{ x: scrollY * -0.2 }}
+        >
           {/* mix-blend-multiply allows the image behind to show through the blue color */}
           <img
             src="/5.svg"
             className="w-full h-full object-contain object-left opacity-90 mix-blend-multiply dark:mix-blend-normal"
             alt="Blue Circle"
           />
-        </div>
+        </motion.div>
 
         {/* 3. Diagonal Lines Overlay (6.svg) - RIGHT SIDE */}
-        <div className="absolute top-0 right-0 h-full w-[60%] z-10 pointer-events-none">
+        <motion.div
+          className="absolute top-0 right-0 h-full w-[60%] z-10 pointer-events-none"
+          style={{ x: scrollY * 0.2 }}
+        >
           <img
             src="/6.svg"
             className="w-full h-full object-cover object-right opacity-80"
             alt="Lines"
           />
-        </div>
+        </motion.div>
 
-        {/* 4. Text Content */}
+        {/* 4. Text Content with Enhanced Animations */}
         <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-8 flex items-center h-full">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -134,19 +186,48 @@ const Home = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="max-w-xl mt-[-40px]"
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-md">
-              Meaningful investments in <br />
-              Main Street businesses
-            </h1>
-            <p className="text-lg text-white/90 mb-8 max-w-md font-medium drop-shadow">
-              Browse vetted investment offerings in communities all over the US.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0px 0px 20px rgba(22, 156, 163, 0.6)" }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-[#169ca3] px-10 py-4 rounded-sm text-white font-bold hover:bg-teal-700 transition shadow-lg uppercase tracking-wide text-xs"
+            <motion.h1
+              className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-md"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
             >
-              Get Started
+              Meaningful investments in <br />
+              <motion.span
+                className="inline-block bg-gradient-to-r from-[#169ca3] to-[#ff5a5f] bg-clip-text text-transparent"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+              >
+                Main Street businesses
+              </motion.span>
+            </motion.h1>
+            <motion.p
+              className="text-lg text-white/90 mb-8 max-w-md font-medium drop-shadow"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.8 }}
+            >
+              Browse vetted investment offerings in communities all over the US.
+            </motion.p>
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0px 0px 30px rgba(22, 156, 163, 0.8)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="relative bg-gradient-to-r from-[#169ca3] to-[#14858b] px-10 py-4 rounded-lg text-white font-bold transition shadow-lg uppercase tracking-wide text-xs overflow-hidden group"
+            >
+              <span className="relative z-10">Get Started</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-[#ff5a5f] to-[#169ca3] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                initial={{ x: '-100%' }}
+                whileHover={{ x: 0 }}
+                transition={{ duration: 0.3 }}
+              />
             </motion.button>
           </motion.div>
         </div>
@@ -348,6 +429,9 @@ alt = "Curve"
       </div>
     </div>
       </footer >
+
+  {/* Scroll to Top Button */ }
+  < ScrollToTop />
     </div >
   );
 };
